@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .container {
+            padding: 16px;
+            width: 500px;
+            height: 500px;
+        }
+
+        .form {
+            padding: 2px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .row {
+            display: block;
+            width: 100%;
+            box-shadow: 2px 4px #eeeeee;
+            margin-bottom: 10px;
+        }
+
+        .col {
+            width: 48%;
+            display: inline-block;
+        }
+
+        .section-title {
+            color: #999;
+        }
+
+        .input-title {
+            font-weight: bold;
+            color: #999;
+            width: 20%;
+        }
+
+        .input-element {
+            width: 70%;
+            border: none;
+            outline: none;
+            border-left: 1px solid #eeeeee;
+        }
+
+        .input-element,
+        .input-title {
+            margin: 0px;
+            padding: 2%;
+            display: inline-block;
+            font-size: 16px;
+            line-height: 16px;
+        }
+
+
+        input[type="range"] {
+            margin: auto;
+            -webkit-appearance: none;
+            position: relative;
+            height: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border-radius: 0;
+            margin-top: 4px;
+        }
+
+        ::-webkit-slider-runnable-track {
+            background: #ddd;
+        }
+
+        ::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 30px;
+            background: #3367d6;
+        }
+    </style>
+
+    <script src="vue.js"></script>
+    <script src="popup.js"></script>
+</head>
+
+<body>
+    <div id="app" class="container">
+        <h1 class="section-title">Codefiction Watermark</h1>
+        <div class="form">
+
+            <div class="row">
+                <span class="input-title">domain</span>
+                <select class="input-element" v-model="selectedDomain">
+                    <option v-for="domain in domains" :value="domain" :text="domain"></option>
+                </select>
+            </div>
+
+            <div class="row">
+                <span class="input-title">selector</span>
+                <input class="input-element" type="text" v-model="settings[selectedDomain].targetSelector" />
+            </div>
+
+            <div class="row">
+                <span class="input-title">logo url</span>
+                <input class="input-element" type="url" v-model="settings[selectedDomain].imageUrl" />
+            </div>
+
+            <div class="row">
+                <span class="input-title">width</span>
+                <input class="input-element" type="range" v-model="settings[selectedDomain].imageWidth" />
+            </div>
+
+            <div class="row">
+                <span class="input-title">height</span>
+                <input class="input-element" type="range" v-model="settings[selectedDomain].imageHeight" />
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
