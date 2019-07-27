@@ -15,6 +15,15 @@
             height: 100%;
         }
 
+        .row .box {
+            display: block;
+            width: 100%;
+        }
+
+        .box {
+            padding: 2%;
+        }
+
         .row {
             display: block;
             width: 100%;
@@ -23,8 +32,20 @@
         }
 
         .col {
-            width: 48%;
             display: inline-block;
+        }
+
+        .col.c2 {
+            width: 48%;
+        }
+
+        .col.c4 {
+            width: 22%;
+        }
+
+        .thumb {
+            width: 32;
+            height: auto;
         }
 
         .section-title {
@@ -35,6 +56,28 @@
             font-weight: bold;
             color: #999;
             width: 20%;
+        }
+
+        .btn {
+            width: 60px;
+            padding: 6px;
+            background: white;
+        }
+
+        .btn.ok {
+            color: cornflowerblue;
+        }
+
+        .btn.good {
+            color: green;
+        }
+
+        .btn.warn {
+            color: orange;
+        }
+
+        .btn.bad {
+            color: crimson;
         }
 
         .input-element {
@@ -78,42 +121,85 @@
     </style>
 
     <script src="vue.js"></script>
-    <script src="popup.js"></script>
 </head>
 
 <body>
-    <div id="app" class="container">
-        <h1 class="section-title">Codefiction Watermark</h1>
+    <div id="app" class="container" v-show="isLoaded">
+        <h1 class="section-title">CF Watermark</h1>
+
         <div class="form">
 
             <div class="row">
-                <span class="input-title">domain</span>
-                <select class="input-element" v-model="selectedDomain">
-                    <option v-for="domain in domains" :value="domain" :text="domain"></option>
+                <button class="btn ok" v-on:click="setNewForm()" v-show="!isNew">Add</button>
+                <button class="btn bad" v-on:click="removeProfile(selectedProfileId)" v-show="!isNew">Remove</button>
+                <button class="btn good" v-on:click="saveProfiles()" v-show="isNew">Save</button>
+                <button class="btn warn" v-on:click="discardNewForm()" v-show="isNew">Cancel</button>
+            </div>
+
+            <div class="row">
+                <span class="input-title">profile</span>
+                <input class="input-element" type="url" v-model="profiles[selectedProfileId].name" v-show="isNew" />
+                <select class="input-element" v-model="selectedProfileId" v-show="!isNew">
+                    <option v-for="profileId in profileIds" v-bind:value="profileId.id">
+                        {{ profileId.name }}
+                    </option>
                 </select>
             </div>
 
             <div class="row">
                 <span class="input-title">selector</span>
-                <input class="input-element" type="text" v-model="settings[selectedDomain].targetSelector" />
+                <input class="input-element" type="text" v-model="profiles[selectedProfileId].targetSelector" />
             </div>
 
             <div class="row">
-                <span class="input-title">logo url</span>
-                <input class="input-element" type="url" v-model="settings[selectedDomain].imageUrl" />
+                <span class="input-title">logo url</img></span>
+                <input class="input-element" type="url" v-model="profiles[selectedProfileId].imageUrl" />
             </div>
 
             <div class="row">
-                <span class="input-title">width</span>
-                <input class="input-element" type="range" v-model="settings[selectedDomain].imageWidth" />
+                <span class="input-title">width <span>({{profiles[selectedProfileId].imageWidth}})</span></span>
+                <input class="input-element" type="range" v-model="profiles[selectedProfileId].imageWidth" />
             </div>
 
             <div class="row">
-                <span class="input-title">height</span>
-                <input class="input-element" type="range" v-model="settings[selectedDomain].imageHeight" />
+                <span class="input-title">height <span>({{profiles[selectedProfileId].imageHeight}})</span></span>
+                <input class="input-element" type="range" v-model="profiles[selectedProfileId].imageHeight" />
+            </div>
+
+            <div class="row">
+                <span class="input-title">position</span>
+                <div class="box">
+
+                    <div class="col c4">
+                        <span class="input-title">top</span>
+                        <input class="input-element" type="number" v-model="profiles[selectedProfileId].top" />
+                    </div>
+
+                    <div class="col c4">
+                        <span class="input-title">left</span>
+                        <input class="input-element" type="number" v-model="profiles[selectedProfileId].left" />
+                    </div>
+
+
+                    <div class="col c4">
+                        <span class="input-title">bottom</span>
+                        <input class="input-element" type="number" v-model="profiles[selectedProfileId].bottom" />
+                    </div>
+
+
+                    <div class="col c4">
+                        <span class="input-title">right</span>
+                        <input class="input-element" type="number" v-model="profiles[selectedProfileId].right" />
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
+    </div>
+
+    <script src="popup.js"></script>
+
 </body>
 
 </html>
