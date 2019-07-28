@@ -1,18 +1,66 @@
+const STORAGE_KEY = 'cfwm_profiles';
+
 var app = new Vue({
     el: '#app',
     data: {
-        isNew: false,
         isLoaded: false,
+        isNew: false,
         profiles: {},
         profileIds: [],
         selectedProfileId: '',
-        newProfileId: ''
+        selectedProfile: {}
+    },
+    init: function () {
+        console.log('init');
     },
     created: function () {
-        console.log('mounted');
+        console.log('created');
         this.loadStored();
     },
+    watch: {
+        selectedProfileId: function (val) {
+            console.log('new:', val);
+            this.selectedProfile = this.profiles[val];
+        },
+        // profiles: {
+        //     handler: function (val) {
+        //         console.log('profiles changed');
+        //         this.saveProfiles();
+        //     },
+        //     deep: true
+        // },
+        selectedProfile: {
+            handler: function (val, oldVal) {
+                console.log('selectedProfile changed');
+                this.profiles[val.id] = val;
+                for (let p = 0; p < this.profileIds.length; p++) {
+                    if (this.profileIds[p].id === val.id) {
+                        this.profileIds[p].name = val.name;
+                    }
+                }
+                this.saveProfiles();
+            },
+            deep: true
+        },
+    },
     methods: {
+        createNewProfileObject() {
+            const id = `p-${Date.now()}`;
+            return {
+                id,
+                name: `new profile ${id}`,
+                targetSelector: '',
+                imageUrl: '',
+                imageWidth: 0,
+                imageHeight: 0,
+                opacity:0.5,
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0
+            };
+        },
+
         loadProfiles: function (items) {
             if (!items) {
                 this.setNewForm();
@@ -25,68 +73,27 @@ var app = new Vue({
                 });
             }
 
-            // let profileIds = [];
-            // let profiles = {};
-
-            // for (let i = 1; i <= 5; i++) {
-            //     const profile = {
-            //         id: `p-${i}`,
-            //         name: `profile-${i}`,
-            //         targetSelector: `selector-${i}`,
-            //         imageUrl: `imageUrl-${i}`,
-            //         imageWidth: i * 10,
-            //         imageHeight: i * 10
-            //     };
-
-            //     profileIds.push({ name: profile.name, id: profile.id });
-            //     profiles[profile.id] = profile;
-            // }
-
-            // this.profileIds = profileIds;
-            // this.profiles = profiles;
-
             this.isLoaded = true;
             this.selectedProfileId = this.profileIds[0].id;
         },
 
         setNewForm: function () {
-            this.newProfileId = `p-${Date.now()}`;
-            const newProfile = {
-                id: this.newProfileId,
-                name: `new profile ${this.newProfileId}`,
-                targetSelector: '',
-                imageUrl: '',
-                imageWidth: 0,
-                imageHeight: 0,
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-
-            };
-            this.profiles[this.newProfileId] = newProfile
-            this.profileIds.push({ name: newProfile.name, id: newProfile.id });
-            this.selectedProfileId = this.newProfileId;
+            this.selectedProfile = this.createNewProfileObject();
+            this.profiles[this.selectedProfile.id] = this.selectedProfile;
+            this.profileIds.push({ name: this.selectedProfile.name, id: this.selectedProfile.id });
+            this.selectedProfileId = this.selectedProfile.id;
             this.isNew = true;
-
-        },
-
-        discardNewForm: function () {
-            this.removeRecord(this.newProfileId);
-            this.newProfileId = '';
-            this.isNew = false;
         },
 
         saveProfiles: function () {
+            console.log('profiles saved.');
             let profiles = [];
             this.profileIds.forEach(pid => {
                 profiles.push(this.profiles[pid.id]);
             });
-            this.storageSet('profiles', profiles);
-
-            // chrome.storage.sync.set({ 'profiles': this.profiles }, function () {
-            //     console.log('profiles saved');
-            // });
+            this.storageSet(STORAGE_KEY, profiles);
+            this.selectedProfileId = this.selectedProfile.id;
+            this.sendToContent(profiles);
         },
 
         removeProfile: function () {
@@ -94,18 +101,20 @@ var app = new Vue({
         },
 
         removeRecord: function (id) {
-            delete this.profiles[id];
             this.profileIds = this.profileIds.filter(p => p.id !== id)
-            this.selectedProfileId = this.profileIds[0].id;
+            delete this.profiles[id];
+
+            if (this.profileIds.length === 0) {
+                this.setNewForm();
+            }
+            else {
+                this.selectedProfileId = this.profileIds[0].id;
+            }
         },
 
         loadStored: function () {
-            const items = this.storageGet('profiles');
+            const items = this.storageGet(STORAGE_KEY);
             this.loadProfiles(items);
-
-            // chrome.storage.sync.get(['profiles'], function (items) {
-            //     this.loadProfiles(items);
-            // });
         },
 
         storageGet: function (key) {
@@ -115,8 +124,18 @@ var app = new Vue({
             }
             return undefined;
         },
+
         storageSet: function (key, value) {
             localStorage.setItem(key, JSON.stringify(value));
         },
+
+        sendToContent: function (profiles) {
+            console.log('sendToContent');
+            if (chrome && chrome.tabs) {
+                chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                    chrome.tabs.sendMessage(tabs[0].id, { profiles });
+                });
+            }
+        }
     }
 });

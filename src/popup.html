@@ -130,40 +130,49 @@
         <div class="form">
 
             <div class="row">
-                <button class="btn ok" v-on:click="setNewForm()" v-show="!isNew">Add</button>
-                <button class="btn bad" v-on:click="removeProfile(selectedProfileId)" v-show="!isNew">Remove</button>
-                <button class="btn good" v-on:click="saveProfiles()" v-show="isNew">Save</button>
-                <button class="btn warn" v-on:click="discardNewForm()" v-show="isNew">Cancel</button>
+                <button class="btn ok" v-on:click="setNewForm()" v-show="!isNew">New</button>
+                <button class="btn bad" v-on:click="removeRecord(selectedProfileId)">Remove</button>
+                <button class="btn good" v-on:click="isNew=false" v-show="isNew">Done</button>
             </div>
 
             <div class="row">
                 <span class="input-title">profile</span>
-                <input class="input-element" type="url" v-model="profiles[selectedProfileId].name" v-show="isNew" />
+                <input class="input-element" type="url" v-model="selectedProfile.name" v-show="isNew" />
                 <select class="input-element" v-model="selectedProfileId" v-show="!isNew">
                     <option v-for="profileId in profileIds" v-bind:value="profileId.id">
-                        {{ profileId.name }}
+                        {{ profileId.name }} <sub>({{ profileId.id }})</sub>
                     </option>
                 </select>
             </div>
 
             <div class="row">
                 <span class="input-title">selector</span>
-                <input class="input-element" type="text" v-model="profiles[selectedProfileId].targetSelector" />
+                <input class="input-element" type="text" v-model="selectedProfile.targetSelector" />
             </div>
 
             <div class="row">
                 <span class="input-title">logo url</img></span>
-                <input class="input-element" type="url" v-model="profiles[selectedProfileId].imageUrl" />
+                <input class="input-element" type="url" v-model="selectedProfile.imageUrl" />
             </div>
 
             <div class="row">
-                <span class="input-title">width <span>({{profiles[selectedProfileId].imageWidth}})</span></span>
-                <input class="input-element" type="range" v-model="profiles[selectedProfileId].imageWidth" />
+                <span class="input-title">opacity <span>({{selectedProfile.opacity}})</span></span>
+                <input class="input-element" type="range" min="0" max="1" step="0.1"
+                    v-model="selectedProfile.opacity" />
             </div>
 
             <div class="row">
-                <span class="input-title">height <span>({{profiles[selectedProfileId].imageHeight}})</span></span>
-                <input class="input-element" type="range" v-model="profiles[selectedProfileId].imageHeight" />
+                <span class="input-title">dimensions</span>
+                <div class="box">
+                    <div class="col c2">
+                        <span class="input-title">width</span>
+                        <input class="input-element" type="number" v-model="selectedProfile.imageWidth" />
+                    </div>
+                    <div class="col c2">
+                        <span class="input-title">height</span>
+                        <input class="input-element" type="number" v-model="selectedProfile.imageHeight" />
+                    </div>
+                </div>
             </div>
 
             <div class="row">
@@ -172,30 +181,29 @@
 
                     <div class="col c4">
                         <span class="input-title">top</span>
-                        <input class="input-element" type="number" v-model="profiles[selectedProfileId].top" />
+                        <input class="input-element" type="number" v-model="selectedProfile.top" />
                     </div>
 
                     <div class="col c4">
                         <span class="input-title">left</span>
-                        <input class="input-element" type="number" v-model="profiles[selectedProfileId].left" />
+                        <input class="input-element" type="number" v-model="selectedProfile.left" />
                     </div>
 
 
                     <div class="col c4">
                         <span class="input-title">bottom</span>
-                        <input class="input-element" type="number" v-model="profiles[selectedProfileId].bottom" />
+                        <input class="input-element" type="number" v-model="selectedProfile.bottom" />
                     </div>
 
 
                     <div class="col c4">
                         <span class="input-title">right</span>
-                        <input class="input-element" type="number" v-model="profiles[selectedProfileId].right" />
+                        <input class="input-element" type="number" v-model="selectedProfile.right" />
                     </div>
                 </div>
             </div>
         </div>
 
-    </div>
     </div>
 
     <script src="popup.js"></script>
