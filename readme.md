@@ -1,4 +1,4 @@
-## codefiction-answerminer-watermark
+## codefiction-element-watermark
 
 ### development + local use
 ```
@@ -14,7 +14,11 @@ chrome -> extensions -> load unpacked -> (browse src folder)
 
 
 ### preview
-![codefiction-answerminer-watermark](https://github.com/ozgend/codefiction-answerminer-watermark/blob/master/preview.png)
+*extension*
+![extension](https://github.com/ozgend/element-watermark/blob/master/extension.png)
+
+
+![demo](https://github.com/ozgend/element-watermark/blob/master/preview.png)
 
 ---
 
