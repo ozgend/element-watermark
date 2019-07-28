@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .container {
+            padding: 16px;
+            width: 500px;
+            height: 500px;
+        }
+
+        .form {
+            padding: 2px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .row .box {
+            display: block;
+            width: 100%;
+        }
+
+        .box {
+            padding: 2%;
+        }
+
+        .row {
+            display: block;
+            width: 100%;
+            box-shadow: 2px 4px #eeeeee;
+            margin-bottom: 10px;
+        }
+
+        .col {
+            display: inline-block;
+        }
+
+        .col.c2 {
+            width: 48%;
+        }
+
+        .col.c4 {
+            width: 22%;
+        }
+
+        .thumb {
+            width: 32;
+            height: auto;
+        }
+
+        .section-title {
+            color: #999;
+        }
+
+        .input-title {
+            font-weight: bold;
+            color: #999;
+            width: 20%;
+        }
+
+        .btn {
+            width: 60px;
+            padding: 6px;
+            background: white;
+        }
+
+        .btn.ok {
+            color: cornflowerblue;
+        }
+
+        .btn.good {
+            color: green;
+        }
+
+        .btn.warn {
+            color: orange;
+        }
+
+        .btn.bad {
+            color: crimson;
+        }
+
+        .input-element {
+            width: 70%;
+            border: none;
+            outline: none;
+            border-left: 1px solid #eeeeee;
+        }
+
+        .input-element,
+        .input-title {
+            margin: 0px;
+            padding: 2%;
+            display: inline-block;
+            font-size: 16px;
+            line-height: 16px;
+        }
+
+
+        input[type="range"] {
+            margin: auto;
+            -webkit-appearance: none;
+            position: relative;
+            height: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border-radius: 0;
+            margin-top: 4px;
+        }
+
+        ::-webkit-slider-runnable-track {
+            background: #ddd;
+        }
+
+        ::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 30px;
+            background: #3367d6;
+        }
+    </style>
+
+    <script src="vue.js"></script>
+</head>
+
+<body>
+    <div id="app" class="container" v-show="isLoaded">
+        <h1 class="section-title">CF Watermark</h1>
+
+        <div class="form">
+
+            <div class="row">
+                <button class="btn ok" v-on:click="setNewForm()" v-show="!isNew">New</button>
+                <button class="btn bad" v-on:click="removeRecord(selectedProfileId)">Remove</button>
+                <button class="btn good" v-on:click="isNew=false" v-show="isNew">Done</button>
+            </div>
+
+            <div class="row">
+                <span class="input-title">profile</span>
+                <input class="input-element" type="url" v-model="selectedProfile.name" v-show="isNew" />
+                <select class="input-element" v-model="selectedProfileId" v-show="!isNew">
+                    <option v-for="profileId in profileIds" v-bind:value="profileId.id">
+                        {{ profileId.name }} <sub>({{ profileId.id }})</sub>
+                    </option>
+                </select>
+            </div>
+
+            <div class="row">
+                <span class="input-title">selector</span>
+                <input class="input-element" type="text" v-model="selectedProfile.targetSelector" />
+            </div>
+
+            <div class="row">
+                <span class="input-title">logo url</img></span>
+                <input class="input-element" type="url" v-model="selectedProfile.imageUrl" />
+            </div>
+
+            <div class="row">
+                <span class="input-title">opacity <span>({{selectedProfile.opacity}})</span></span>
+                <input class="input-element" type="range" min="0" max="1" step="0.1"
+                    v-model="selectedProfile.opacity" />
+            </div>
+
+            <div class="row">
+                <span class="input-title">dimensions</span>
+                <div class="box">
+                    <div class="col c2">
+                        <span class="input-title">width</span>
+                        <input class="input-element" type="number" v-model="selectedProfile.imageWidth" />
+                    </div>
+                    <div class="col c2">
+                        <span class="input-title">height</span>
+                        <input class="input-element" type="number" v-model="selectedProfile.imageHeight" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <span class="input-title">position</span>
+                <div class="box">
+
+                    <div class="col c4">
+                        <span class="input-title">top</span>
+                        <input class="input-element" type="number" v-model="selectedProfile.top" />
+                    </div>
+
+                    <div class="col c4">
+                        <span class="input-title">left</span>
+                        <input class="input-element" type="number" v-model="selectedProfile.left" />
+                    </div>
+
+
+                    <div class="col c4">
+                        <span class="input-title">bottom</span>
+                        <input class="input-element" type="number" v-model="selectedProfile.bottom" />
+                    </div>
+
+
+                    <div class="col c4">
+                        <span class="input-title">right</span>
+                        <input class="input-element" type="number" v-model="selectedProfile.right" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="popup.js"></script>
+
+</body>
+
+</html>
